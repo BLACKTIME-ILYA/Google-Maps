@@ -27,6 +27,7 @@ public class Data {
 
     private static Context context = App.getApp();
     private final static int ID = 0;
+    private final static int ID2 = 1;
 
     private static boolean select;
 
@@ -71,5 +72,17 @@ public class Data {
                 .setContentText("найдено " + barsList.results.size() + " баров");
         Notification n = builder.build();
         nm.notify(ID, n);
+
+        if (barsList.results.size() != 0) {
+            notificationIntent = new Intent(context, MapActivity.class);
+            contentIntent = PendingIntent.getActivity(context,
+                    ID2, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            builder.setContentIntent(contentIntent)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Бары на карте")
+                    .setContentText("посмотреть");
+            n = builder.build();
+            nm.notify(ID2, n);
+        }
     }
 }

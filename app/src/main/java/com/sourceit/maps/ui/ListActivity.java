@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class ListActivity extends AppCompatActivity {
 
     public static final String SELECTED = "selected";
+    public static final String LIST = "list";
     RecyclerView list;
     LinearLayoutManager layoutManager;
     ArrayList<String> barNames;
@@ -37,6 +38,7 @@ public class ListActivity extends AppCompatActivity {
                 L.d("click " + item);
                 Intent intent = new Intent(ListActivity.this, MapActivity.class);
                 intent.putExtra(SELECTED, position);
+                intent.putExtra(LIST, true);
                 startActivity(intent);
             }
         }));

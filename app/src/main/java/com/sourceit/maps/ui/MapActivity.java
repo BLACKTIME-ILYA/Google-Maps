@@ -16,9 +16,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sourceit.maps.R;
+import com.sourceit.maps.ui.Json.Result;
 
 import static com.sourceit.maps.ui.ListActivity.SELECTED;
 
@@ -29,6 +29,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     LocationManager locationManager;
     String providerName;
 
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +38,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
-        Intent intent = getIntent();
-        bar = new LatLng(Data.barsList.results.get(intent.getIntExtra(SELECTED, 0)).geometry.location.lat, Data.barsList.results.get(intent.getIntExtra(SELECTED, 0)).geometry.location.lng);
+        intent = getIntent();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -55,8 +56,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Marker markerCurrent = googleMap.addMarker(new MarkerOptions().position(bar).title("Bar"));
-        Marker markerBar = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Current"));
+
+        if (intent.getBooleanExtra(ListActivity.LIST, false) == true) {
+            bar = new LatLng(Data.barsList.results.get(intent.getIntExtra(SELECTED, 0)).geometry.location.lat, Data.barsList.results.get(intent.getIntExtra(SELECTED, 0)).geometry.location.lng);
+            googleMap.addMarker(new MarkerOptions().position(bar).title("Bar"));
+        } else {
+            for (Result result : Data.barsList.results) {
+                googleMap.addMarker(new MarkerOptions().position(new LatLng(result.geometry.location.lat, result.geometry.location.lng)).title(result.name));
+            }
+        }
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Current"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
     }
